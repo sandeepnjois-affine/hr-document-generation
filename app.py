@@ -38,6 +38,7 @@ def main():
 
     # Dropdown to select a template
     selected_template = st.selectbox("Select a Template", list(template_paths.keys()))
+    template_path = ''
     template_path = template_paths[selected_template]
 
 
@@ -45,26 +46,29 @@ def main():
     uploaded_file = st.file_uploader("Upload a CSV or Excel file", type=["csv", "xlsx", "xls"])
 
     data = None
-    if uploaded_file.name.endswith(".csv"):
-        data = pd.read_csv(uploaded_file)  # Read CSV
-    elif uploaded_file.name.endswith((".xlsx", ".xls")):
-        data = pd.read_excel(uploaded_file)  # Read Excel
-    
-    # Display the uploaded data in the Streamlit app
-    st.write("Uploaded Data:")
-    st.dataframe(data)
+
+    if uploaded_file:
+        if uploaded_file.name.endswith(".csv"):
+            data = pd.read_csv(uploaded_file)  # Read CSV
+        elif uploaded_file.name.endswith((".xlsx", ".xls")):
+            data = pd.read_excel(uploaded_file)  # Read Excel
+        
+        # Display the uploaded data in the Streamlit app
+        st.write("Uploaded Data:")
+        st.dataframe(data)
 
     # Submit button
-    if st.button("Generate Document"):
-        with st.spinner("Wait for it... Document generation in progess"):
-            buffer_doc = populate_docx_with_gpt(template_path, data)
-            # Provide a download button
-            st.download_button(
-                label="Download Generated Document",
-                data=buffer_doc.getvalue(),
-                file_name="generated_document.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            )
+    if any(template_path) and data is not None:
+        if st.button("Generate Document"):
+            with st.spinner("Wait for it... Document generation in progess"):
+                buffer_doc = populate_docx_with_gpt(template_path, data)
+                # Provide a download button
+                st.download_button(
+                    label="Download Generated Document",
+                    data=buffer_doc.getvalue(),
+                    file_name="generated_document.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                )
 
 if __name__ == "__main__":
     main()
