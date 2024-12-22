@@ -10,6 +10,7 @@ import base64
 import re
 import os 
 import time
+import streamlit as st
 
 client = AzureOpenAI(
     azure_endpoint=st.secrets["AZURE_ENDPOINT"],
