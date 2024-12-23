@@ -373,13 +373,60 @@ def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
                     value_cell.text = updated_value
 
 
+    # for paragraph in doc.paragraphs:
+    #     # Create a list to hold new runs
+    #     new_runs = []
+    #     for run in paragraph.runs:
+    #         # Split the run text into segments based on the ## markers
+    #         matches = re.split(r'(##.*?##)', run.text)
+
+    #         for match in matches:
+    #             if match.startswith("##") and match.endswith("##"):
+    #                 # Extract the text inside the markers and create a bold run
+    #                 bold_text = match.strip("#")
+    #                 new_run = paragraph.add_run(bold_text)
+    #                 new_run.bold = True
+    #             elif match.startswith('"') and match.endswith('"'):
+    #                 # Create a bold run for text enclosed in double quotes, including the quotes
+    #                 bold_text = match
+    #                 new_run = paragraph.add_run(bold_text)
+    #                 new_run.bold = True
+    #             else:
+    #                 # Copy the formatting of the original run for non-bold text
+    #                 new_run = paragraph.add_run(match)
+    #                 new_run.font.name = run.font.name
+    #                 new_run.font.size = run.font.size
+    #                 new_run.font.color.rgb = run.font.color.rgb
+    #                 new_run.italic = run.italic
+    #                 new_run.underline = run.underline
+    #                 new_run.bold = run.bold  # Retain existing bold formatting if present
+                    
+    #             new_runs.append(new_run)
+
+    #         # Clear the original text in the run
+    #         run.text = ""
+
+    #     # Add the new runs back to the paragraph
+    #     for new_run in new_runs:
+    #         paragraph._element.append(new_run._element)
+
+
     for paragraph in doc.paragraphs:
-        # Create a list to hold new runs
-        new_runs = []
-        for run in paragraph.runs:
+        # Iterate over a copy of the runs to avoid modifying the list while iterating
+        original_runs = list(paragraph.runs)
+
+        for run in original_runs:
+            # Skip runs that contain images or other non-text content
+            if run.text.strip() == "":
+                continue  # Likely contains non-text content, such as an image or hyperlink
+
             # Split the run text into segments based on the ## markers
             matches = re.split(r'(##.*?##)', run.text)
 
+            # Clear the original text in the run
+            run.text = ""
+
+            # Process matches and recreate the runs
             for match in matches:
                 if match.startswith("##") and match.endswith("##"):
                     # Extract the text inside the markers and create a bold run
@@ -387,12 +434,12 @@ def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
                     new_run = paragraph.add_run(bold_text)
                     new_run.bold = True
                 elif match.startswith('"') and match.endswith('"'):
-                    # Create a bold run for text enclosed in double quotes, including the quotes
+                    # Create a bold run for text enclosed in double quotes
                     bold_text = match
                     new_run = paragraph.add_run(bold_text)
                     new_run.bold = True
                 else:
-                    # Copy the formatting of the original run for non-bold text
+                    # Retain the original formatting for non-bold text
                     new_run = paragraph.add_run(match)
                     new_run.font.name = run.font.name
                     new_run.font.size = run.font.size
@@ -400,15 +447,10 @@ def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
                     new_run.italic = run.italic
                     new_run.underline = run.underline
                     new_run.bold = run.bold  # Retain existing bold formatting if present
-                    
-                new_runs.append(new_run)
 
-            # Clear the original text in the run
-            run.text = ""
-
-        # Add the new runs back to the paragraph
-        for new_run in new_runs:
-            paragraph._element.append(new_run._element)
+                    # Ensure consistent font size if missing
+                    # if new_run.font.size is None:
+                    #     new_run.font.size = Pt(11)  # Example default size
 
 
     # Save the updated document to the specified output path
