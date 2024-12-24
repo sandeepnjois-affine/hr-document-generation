@@ -169,6 +169,25 @@ def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
         #     Response -> `##Confidentiality:##  It is hereby agreed by the Employee that the information concerning the workings of the Company`
 
 
+        # - Case 2: For placeholders or section headers followed by a colon (:), retain the key (including the colon) and append the value
+        #     - Include the wrapping which is enclosing the key and value appended within double hashed (##)
+        #     - In this case, retain the placeholder name but just appened value after the colon (":") and everython with wrapping.
+
+        #     Examples:
+
+        #     Template → Date:
+        #     Response → ##Date: 12/12/2024##
+
+        #     Template → Exployee code:
+        #     Response → ##Exployee code: 165##
+
+        #     Template → Designation:
+        #     Response → ##Designation: Data scientist##
+            
+        #     Template → Location:
+        #     Response → ##Location: New york##
+
+
         prompt = f"""
         You are an AI tasked with replacing placeholders in an HR document template using the provided input data.  
 
@@ -200,25 +219,25 @@ def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
             Template → <<DOJ dd/MM/YYYY>>
             Response → ##12/12/2024##
 
+            Template → Date:
+            Response → Date: ##12/12/2024##
+
+            Template -> Date of Joining: <<DOJ dd/MM/YYYY>>
+            Response -> Date of Joining: ##12/12/2024##
+
+            Template -> Name:
+            Response -> Name: ##John##
+
+            Template -> Location:
+            Response -> Location: ##New york##
+
+            Template -> Designation:
+            Response -> Designation: ##Data scientist##
+        
             Template -> We are pleased to appoint you as <<Designation>>, at our organization Affine Analytics Pvt. Ltd. with effect from <<DOJ dd/MM/YYYY>>
             Response -> We are pleased to appoint you as ##Data scientist##, at our organization Affine Analytics Pvt. Ltd. with effect from ##12/12/2024##
 
-        - Case 2: For placeholders or section headers followed by a colon (:), retain the key (including the colon) and append the value
-            - Include the wrapping which is enclosing the key and value appended within double hashed (##)
-            - In this case, retain the placeholder name but just appened value after the colon (":") and everython with wrapping.
-
-            Examples:
-
-            Template → Date:
-            Response → ##Date: 12/12/2024##
-
-            Template → Exployee code:
-            Response → ##Exployee code: 165##
-
-            Template → Designation:
-            Response → ##Designation: Data scientist##
-
-        - Case 3: If the section header followed by a colon (:) is succeeded by content, wrap the section header (including the colon) in double hashes.
+        - Case 2: If the section header followed by a colon (:) is succeeded by content, wrap the section header (including the colon) in double hashes.
             
             Example:
 
@@ -228,7 +247,22 @@ def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
             Template - Full Time Employment: The Employee is appointed as a full time employee of the Company & shall devote his time exclusively for the business of the Company.
             Response - ##Full Time Employment:## The Employee is appointed as a full time employee of the Company & shall devote his time exclusively for the business of the Company.
 
+        5. If there are phrases or words enclosed within double quotes, just enclose them withing double hashes including double quotes
+            
+            Example:
+            Template → This Employment Agreement (this “Agreement”) is executed on the <<DOJ dd/MM/YYYY>>, at Affine Analytics, Bengaluru.
+            Response → This Employment Agreement (this ##“Agreement”##) is executed on the 01/12/2024, at Affine Analytics, Bengaluru.
+
         5. Do not wrap pronouns (e.g., "his," "her," "him") even if they reference replaced attributes.  
+
+        6. If CTC is asked in words, make sure to write it in words
+            Example:
+            Template -> INR <<CTC>>/- (INR <<CTC in words>> only)
+            Response -> INR 10L/- (INR Ten lakh only)
+
+            Example:
+            Template -> $<<CTC in number>> (USD <<CTC in words>> only)
+            Response -> $10L (USD Ten lakh only)
 
         Do NOT write anything after 'Dear name', or 'Name'
         Do NOT unnessasarily add all the info in input data as key: value pair
@@ -433,20 +467,34 @@ def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
                     bold_text = match.strip("#")
                     new_run = paragraph.add_run(bold_text)
                     new_run.bold = True
+                    print('new_run 1:  ', new_run.text)
                 elif match.startswith('"') and match.endswith('"'):
                     # Create a bold run for text enclosed in double quotes
                     bold_text = match
                     new_run = paragraph.add_run(bold_text)
                     new_run.bold = True
+                    print('new_run 2:  ', new_run.text)
+
                 else:
                     # Retain the original formatting for non-bold text
+                    print("match:  ", match)
                     new_run = paragraph.add_run(match)
+                    print("new_run 31: ", new_run.text)
                     new_run.font.name = run.font.name
+                    # print("new_run 32: ", new_run.text)
+
                     new_run.font.size = run.font.size
+                    # print("new_run 33: ", new_run.text)
+
                     new_run.font.color.rgb = run.font.color.rgb
                     new_run.italic = run.italic
+                    # print("new_run 34: ", new_run.text)
+
                     new_run.underline = run.underline
+                    # print("new_run 35: ", new_run.text)
+
                     new_run.bold = run.bold  # Retain existing bold formatting if present
+                    # print('new_run 3:  ', new_run.text)
 
                     # Ensure consistent font size if missing
                     # if new_run.font.size is None:

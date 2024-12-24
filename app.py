@@ -29,12 +29,17 @@ def main():
     template_paths = {
         "Offshore_Appointment letter": "templates/Offshore_Appointment letter.docx",
         "Offshore_Relieving Letter": "templates/Offshore_Relieving Letter.docx",
-        "Onsite_Relieving Letter": "templates/Onsite_Relieving Letter.docx",
         "Offshore_Appointment letter_with Relocation": "templates/Offshore_Appointment letter_with Relocation.docx",
-        "Onsite_Internship letter": "templates/Onsite_Internship letter.docx",
         "Offshore_Internship Letter": "templates/Offshore_Internship Letter.docx",
-        "Onsite_Offer Letter": "templates/Onsite_Offer Letter.docx",
+        "Onsite_Internship letter": "templates/Onsite_Internship letter-1.docx",
+        "Onsite_Offer letter.docx": "templates/Onsite_Offer letter-2.docx",
+        "Onsite_Relieving Letter.docx":"templates/Onsite_Relieving Letter-2.docx"
     }
+
+
+#        "Onsite_Offer Letter": "templates/Onsite_Offer Letter.docx",
+        # "Onsite_Relieving Letter": "templates/Onsite_Relieving Letter.docx",
+        # "Onsite_Internship letter": "templates/Onsite_Internship letter.docx",
 
     # Dropdown to select a template
     selected_template = st.selectbox("Select a Template", list(template_paths.keys()))
