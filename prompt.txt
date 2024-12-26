@@ -1,0 +1,74 @@
+###  Instructions for Replacing Placeholders :  
+1.  General Replacement Rules :  
+- Replace placeholders with the most contextually relevant value from the input data.  
+- If no relevant value exists, leave the placeholder unchanged.  
+
+2.  Pronouns and Gender Formatting :  
+- Format pronouns (e.g., his/her, Mr./Mrs.) based on the gender of the name in the input data.  
+
+3.  Date Formatting :  
+- If a date placeholder (e.g., `<<LWD dd/MM/YYYY>>`) is present, replace it with a date in the format `dd/MM/YYYY` (e.g., `12/12/2024`).  
+
+4. General Placeholder Replacement with wrapping:
+
+- Case 1: For placeholders enclosed in `<< >>` or in the form of a blank line (__________), replace them with the value directly.
+    - Include the wrapping which is enclosing the values replaced within double hashed (##)
+    - In this case, do not include the placeholder name but just the value with wrapping.
+
+    Examples:
+
+    Template → <<LWD dd/MM/YYYY>>
+    Response → ##12/12/2024##
+
+    Template → <<DOJ dd/MM/YYYY>>
+    Response → ##12/12/2024##
+
+    Template → Date:
+    Response → Date: ##12/12/2024##
+
+    Template -> Date of Joining: <<DOJ dd/MM/YYYY>>
+    Response -> Date of Joining: ##12/12/2024##
+
+    Template -> Name:
+    Response -> Name: ##John##
+
+    Template -> Location:
+    Response -> Location: ##New york##
+
+    Template -> Designation:
+    Response -> Designation: ##Data scientist##
+
+    Template -> We are pleased to appoint you as <<Designation>>, at our organization Affine Analytics Pvt. Ltd. with effect from <<DOJ dd/MM/YYYY>>
+    Response -> We are pleased to appoint you as ##Data scientist##, at our organization Affine Analytics Pvt. Ltd. with effect from ##12/12/2024##
+
+- Case 2: If the section header followed by a colon (:) is succeeded by content, wrap the section header (including the colon) in double hashes.
+    
+    Example:
+
+    Template → Confidentiality: It is hereby agreed by the Employee that the information concerning the workings of the Company...
+    Response → ##Confidentiality:## It is hereby agreed by the Employee that the information concerning the workings of the Company...
+
+    Template - Full Time Employment: The Employee is appointed as a full time employee of the Company & shall devote his time exclusively for the business of the Company.
+    Response - ##Full Time Employment:## The Employee is appointed as a full time employee of the Company & shall devote his time exclusively for the business of the Company.
+
+5. If there are phrases or words enclosed within double quotes, just enclose them withing double hashes including double quotes
+    
+    Example:
+    Template → This Employment Agreement (this “Agreement”) is executed on the <<DOJ dd/MM/YYYY>>, at Affine Analytics, Bengaluru.
+    Response → This Employment Agreement (this ##“Agreement”##) is executed on the 01/12/2024, at Affine Analytics, Bengaluru.
+
+5. Do not wrap pronouns (e.g., "his," "her," "him") even if they reference replaced attributes.  
+
+6. If CTC is asked in words, make sure to write it in words
+    Example:
+    Template -> INR <<CTC>>/- (INR <<CTC in words>> only)
+    Response -> INR 10L/- (INR Ten lakh only)
+
+    Example:
+    Template -> $<<CTC in number>> (USD <<CTC in words>> only)
+    Response -> $10L (USD Ten lakh only)
+
+Do NOT write anything after 'Dear name', or 'Name'
+Do NOT unnessasarily add all the info in input data as key: value pair
+Do NOT inlcude words such as template or response in your answer. That is only for example purpose.
+Answer only what is expected. Do NOT add/include any introductory or concluding phrases
