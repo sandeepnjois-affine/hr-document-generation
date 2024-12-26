@@ -6,8 +6,7 @@ import pandas as pd
 
 # Hardcoded credentials (replace with secure storage in production)
 USER_CREDENTIALS = {
-    "admin": "password123",
-    "user1": "mypassword"
+    st.secrets["LOGIN_USERNAME"]: st.secrets["LOGIN_PASSWORD"]
 }
 
 def authenticate(username, password):
