@@ -21,39 +21,6 @@ model_name = st.secrets["AZURE_MODEL"]
 
 
 
-import re
-
-def wrap_double_quotes_with_hashes(text):
-    # Regex to find phrases within double quotes “ ”
-    matches = re.findall(r'“(.*?)”', text)
-
-    # Replace each match with ##“phrase”##
-    for match in matches:
-        original = f'“{match}”'
-        wrapped = f'##“{match}”##'
-        text = text.replace(original, wrapped)
-
-    return text
-
-# # Example usage
-# input_text = 'The “Company” has a policy that ensures “Employee Satisfaction” is a priority.'
-# updated_text = wrap_double_quotes_with_hashes(input_text)
-
-# print("Updated Text:")
-# print(updated_text)
-
-
-def wrap_phrases_with_hashes(text):
-    # Regular expression to match phrases starting with a capital letter and ending with a colon,
-    # but not already wrapped in double hashes
-    # matches = re.findall(r'(?<!##)([A-Z][a-zA-Z\s]*:)(?!##)', text)
-    matches = re.findall(r'(?<!##)([A-Z][a-zA-Z\s]*:)', text)
-    # Replace each match by wrapping it within double hashes
-    for match in matches:
-        wrapped_phrase = f"##{match.strip()}##"
-        text = text.replace(match, wrapped_phrase)
-    return text
-
 def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
     """
     Populate a .docx template with values from an input file using GPT-4.
@@ -76,7 +43,7 @@ def populate_docx_with_gpt(template_path, data, gpt_model="gpt-4"):
     # input_data = data.to_dict(orient="records")[0]  # Assuming single-row input
 
     # Load the template .docx file
-    doc = Document(template_path)
+
 
     print('type data:' , type(data))
     print("data:  ", data)

@@ -175,3 +175,4 @@ cython_debug/
 save_inserted_images.py
 rtf_to_docx.py
 extracted_images/
+test.py
