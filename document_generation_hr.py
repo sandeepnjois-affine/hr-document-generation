@@ -156,22 +156,26 @@ class DocumentGeneration:
                     continue  # Likely contains non-text content, such as an image or hyperlink
 
                 # Split the run text into segments based on the ## markers
+                print("run.text:   ", run)
                 matches = re.split(r'(##.*?##)', run.text)
-
+                print("matches:  ", matches)
                 # Clear the original text in the run
                 run.text = ""
 
                 # Process matches and recreate the runs
                 for match in matches:
                     if match.startswith("##") and match.endswith("##"):
+                        print("if")
                         bold_text = match.strip("#")
                         new_run = paragraph.add_run(bold_text)
                         new_run.bold = True
                     elif match.startswith('"') and match.endswith('"'):
+                        print("elif")
                         bold_text = match
                         new_run = paragraph.add_run(bold_text)
                         new_run.bold = True
                     else:
+                        print("else")
                         # Retain the original formatting for non-bold text
                         new_run = paragraph.add_run(match)
                         new_run.font.name = run.font.name
