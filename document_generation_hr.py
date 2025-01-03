@@ -82,8 +82,11 @@ class DocumentGeneration:
         prompt = f"""
         Read the input CSV and provide the relevant and appropriate value for {placeholder}:
         Answer just the value.
-        If you don't find relevant and approprioate value, just return NA
+        If you don't find relevant and appropriate value, just return NA
+        Always answer the numeric value by using comma by following Indian numbering system
+        Example:  20,00,000, 21,600, 3,00,150 etc
 
+        Just answer the numeric value without enclosing with any form of quotes or double quotes
         Input CSV:
         {data.to_csv(index=False)}
 
